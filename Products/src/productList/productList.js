@@ -3,20 +3,22 @@ import '../App.css';
 import Product from '../product/product';
 import ProductForm from '../productForm/productForm';
 import Total from '../total/total';
+import CircularIndeterminate from '../spinner/spinner';
 import axios from 'axios';
 
 
 export const ProductList = () => {
     const [total, setTotal] = React.useState(0);
-    const [productList, setProductList] = React.useState( [
-    ]);
+    const [productList, setProductList] = React.useState([]);
+    const [spinner, setSpinnerValue] = React.useState(true);
     const [newProductForm, setNewProdForm] = React.useState({name: '', price: ''});
 
     const onMount = async () => {
-        const result = await axios.get('http://localhost:3001/')
+        const result = await axios.get('http://localhost:3001/');
         const productList = result.data.products;
         setProductList(productList);
-    }
+        setSpinnerValue(false);
+    };
 
     useEffect( ()=>{
         onMount()
@@ -54,7 +56,7 @@ export const ProductList = () => {
     function removeProduct(id, productsAmount) {
         let newList = productList.slice();
         newList.splice(productList.findIndex(ele => ele.id === id), 1);
-        calculateTotal('reduce', productsAmount)
+        calculateTotal('reduce', productsAmount);
         setProductList(newList);
     }
 
@@ -71,14 +73,19 @@ export const ProductList = () => {
     }
 
     return(
-        <div className='noClassName'>
-            <div className='newProdForm'>
-                <ProductForm name={newProductForm.name} price={newProductForm.price} handleName={editFormName} handlePrice={editFormPrice} handleSubmit={addNewProduct}/>
+         spinner ?
+            <div className='centerSpinner'>
+                <CircularIndeterminate />
             </div>
-            <div className='productsClass'>
-                {products}
+            :
+            <div className='noClassName'>
+                <div className='newProdForm'>
+                    <ProductForm name={newProductForm.name} price={newProductForm.price} handleName={editFormName} handlePrice={editFormPrice} handleSubmit={addNewProduct}/>
+                </div>
+                <div className='productsClass'>
+                    {products}
+                </div>
+                <Total total={total}/>
             </div>
-            <Total total={total}/>
-        </div>
     )
 };

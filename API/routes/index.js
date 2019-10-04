@@ -12,7 +12,7 @@ router.get('/', async function (req, res) {
     setTimeout(() => {
         res.status(200).json({success: true, products: products });
         console.log('de da go vidam')
-    }, 5000);
+    }, 2500);
 });
 
 router.post('/addNew', function (req, res) {
