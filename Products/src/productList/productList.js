@@ -3,7 +3,7 @@ import '../App.css';
 import Product from '../product/product';
 import ProductForm from '../productForm/productForm';
 import Total from '../total/total';
-import CircularIndeterminate from '../spinner/spinner';
+// import CircularIndeterminate from '../spinner/spinner';
 import axios from 'axios';
 
 
@@ -75,7 +75,7 @@ export const ProductList = () => {
     return(
          spinner ?
             <div className='centerSpinner'>
-                <CircularIndeterminate />
+
             </div>
             :
             <div className='noClassName'>
