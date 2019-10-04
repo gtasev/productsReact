@@ -25,12 +25,8 @@ export const ProductList = () => {
     },[]);
 
     var products = productList.map(product => {
-        return <Product key={product.id} id={product.id} name={product.name} price = {product.price} link = {product.src} handleShow={showProduct} handleTotal={calculateTotal} handleRemoveProduct={removeProduct}/>
+        return <Product key={product.id} id={product.id} name={product.name} price = {product.price} link = {product.src} handleTotal={calculateTotal} handleRemoveProduct={removeProduct}/>
     });
-
-    function randomId() {
-        return Math.floor(Math.random() * 1000000);
-    }
 
     function calculateTotal(action,price) {
         let value;
@@ -42,22 +38,33 @@ export const ProductList = () => {
         setTotal(value)
     }
 
-    function showProduct(name) {
-        alert('You  selected ' + name);
-    }
+    async function addNewProduct() {
+        const addNewProd = await axios.post('http://localhost:3001/addNew', {
+            name: newProductForm.name, price: parseInt(newProductForm.price)
+        });
 
-    function addNewProduct() {
+
+
+
         const newList = productList.slice();
-        newList.push({id: randomId(), name: newProductForm.name, price: parseInt(newProductForm.price)});
+        newList.push({name: newProductForm.name, price: parseInt(newProductForm.price)});
         setProductList(newList);
         setNewProdForm({name: '', price: 0});
     }
 
-    function removeProduct(id, productsAmount) {
-        let newList = productList.slice();
-        newList.splice(productList.findIndex(ele => ele.id === id), 1);
-        calculateTotal('reduce', productsAmount);
-        setProductList(newList);
+    async function removeProduct(id, productsAmount) {
+        setSpinnerValue(true);
+        const deleteProd = await axios.delete(
+            'http://localhost:3001/removeProduct',
+            {headers: {},
+                data:{
+                    productId: id
+                }}
+        );
+        if (deleteProd.status === 200) {
+            calculateTotal('reduce', productsAmount);
+            onMount();
+        }
     }
 
     function editFormName(name) {
